@@ -18,6 +18,7 @@ def print_hello():
     Print Hello World!
     """
     # TODO: เขียนคำสั่ง print
+    print("Hello World!")
     
 
 @task()
@@ -27,6 +28,7 @@ def print_date():
     ref: https://www.w3schools.com/python/python_datetime.asp
     """
     # TODO: print เวลาปัจจุบัน
+    print(datetime.datetime.now())
 
 
 @dag(default_args=default_args, schedule_interval="@once", start_date=days_ago(1), tags=['exercise'])
@@ -36,6 +38,7 @@ def exercise1_taskflow_dag():
     t2 = print_date()
 
     # TODO: เขียน dependency ให้ทำ t1 ก่อน t2
+    t1 >> t2
 
 
 exercise1_dag = exercise1_taskflow_dag()
