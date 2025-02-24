@@ -20,6 +20,7 @@ default_args = {
 
 
 # TODO: สร้าง task แรก เพื่อ Query ข้อมูลจาก MySQL
+@task()
 def get_data_from_mysql(output_path):
     # รับ output_path มาจาก task ที่เรียกใช้
 
@@ -41,6 +42,7 @@ def get_data_from_mysql(output_path):
 
 
 # TODO: สร้าง task ที่ 2 (ทำงานพร้อม task แรก) เพื่อเรียกข้อมูล conversion rate
+@task()
 def get_conversion_rate(output_path):
     # ส่ง request ไป get ข้อมูลจาก CONVERSION_RATE_URL
     r = requests.get(CONVERSION_RATE_URL)
@@ -55,6 +57,7 @@ def get_conversion_rate(output_path):
 
 
 # TODO: สร้าง task ที่ 3 เพื่อ merge data (ต้องทำงานหลัง task 1 และ 2 เท่านั้น)
+@task()
 def merge_data(transaction_path, conversion_rate_path, output_path):
     # อ่านจากไฟล์ สังเกตว่าใช้ path จากที่รับ parameter มา
     transaction = pd.read_parquet(transaction_path)
@@ -80,6 +83,7 @@ def merge_data(transaction_path, conversion_rate_path, output_path):
 
 
 # TODO: สร้าง dag
+@dag(default_args=default_args, schedule_interval="@once", start_date=days_ago(1), tags=['workshop'])
 def workshop4_pipeline():
     """
     # Exercise4: Final DAG
@@ -87,7 +91,16 @@ def workshop4_pipeline():
     """
     
     # TODO: สร้าง task จาก function ด้านบน และใส่ parameter ให้ถูกต้อง
+    t1 = get_data_from_mysql(output_path = mysql_output_path)
+    t2 = get_conversion_rate(output_path = conversion_rate_output_path)
+    t3 = merge_data(
+				    transaction_path = mysql_output_path, 
+				    conversion_rate_path = conversion_rate_output_path, 
+				    output_path = final_output_path
+		)
+
 
     # TODO: สร้าง dependency ให้ถูกต้อง (ต้องรัน task 3 หลังจาก 1 และ 3 เสร็จเท่านั้น)
+    [t1, t2] >> t3
 
 workshop4_pipeline()
