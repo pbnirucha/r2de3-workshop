@@ -36,9 +36,14 @@ def exercise2_taskflow_dag():
     # ใน exercise นี้จะได้รู้จักกับการแยก pipeline ออกเพื่อให้ทำงานแบบ parallel พร้อมกันได้
     # ซึ่ง TaskFlow แบบใหม่ ก็สามารถใช้งานร่วมกับการเขียน Operator แบบเดิมได้เหมือนกัน
 
-    t3 = # TODO: สร้าง BashOperator เพื่อรัน gsutil ls (hint: ดูตัวอย่างจาก example dag ได้)
+    # TODO: สร้าง BashOperator เพื่อรัน gsutil ls (hint: ดูตัวอย่างจาก example dag ได้)
+    t3 = BashOperator(
+        task_id="list_file",
+        bash_command="gsutil ls"
+    )
     
     # TODO: สร้าง dependency ให้ fan-out โดยที่ t1 ก่อน แล้วค่อยทำ t2, t3 พร้อม ๆ กัน
+    t1 >> [t2, t3]
     
 
 exercise2_dag = exercise2_taskflow_dag()
