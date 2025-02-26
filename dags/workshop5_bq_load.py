@@ -96,7 +96,13 @@ def workshop5_bash():
     )
 
     # TODO: สร้าง t4 ที่เป็น BashOperator เพื่อใช้งานกับ BigQuery และใส่ dependencies
+    t4 = BashOperator(
+    task_id="bq_load",
+    bash_command="bq load \
+		--source_format=PARQUET \
+		workshop.transaction \
+		gs://us-central1-workshop5-7ee9ea6a-bucket/data/workshop4_output.parquet")
 
-    [t1, t2] >> t3
+    [t1, t2] >> t3 >> t4
 
 workshop5_bash()
