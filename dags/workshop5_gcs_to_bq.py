@@ -96,7 +96,15 @@ def workshop5():
     )
 
     # TODO: สร้าง t4 ที่เป็น GCSToBigQueryOperator เพื่อใช้งานกับ BigQuery แบบ Airflow และใส่ dependencies
+    t4 = GCSToBigQueryOperator(
+			task_id='gcs_to_bq',
+			bucket='us-central1-workshop5-7ee9ea6a-bucket',
+			source_objects=['data/workshop4_output.parquet'],
+			source_format = 'PARQUET',
+			destination_project_dataset_table='workshop.transaction2',
+			write_disposition='WRITE_TRUNCATE',
+		)
 
-    [t1, t2] >> t3
+    [t1, t2] >> t3 >> t4
 
 workshop5()
